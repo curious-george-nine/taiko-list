@@ -3,10 +3,10 @@
 </script>
 
 <div class="mt-4">
-  <div class="menu-title">
+  <div class="menu-title lg:hidden">
     current: {$t("select.language")}
   </div>
-  <select class="select w-24 lg:mt-0" bind:value={$locale}>
+  <select class="select w-24" bind:value={$locale}>
     {#each locales as l}
       <option value={l}>{l}</option>
     {/each}
