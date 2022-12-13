@@ -1,4 +1,6 @@
 <script>
+  // my biggest project i ever had lol;
+
   import Toast from "./Toast.svelte";
 
   import { t } from "../i18n";
@@ -6,35 +8,37 @@
 
   import { warning } from "svelte-awesome/icons";
   import { Icon } from "svelte-awesome";
+  import { close } from "svelte-awesome/icons";
 
   let fetchProjects = async () => {
     const res = await fetch(
-      "https://aw.githubusercontent.com/curious-george-nine/taiko-projects-list/main/projects.json"
+      "https://raw.githubusercontent.com/curious-george-nine/taiko-projects-list/main/projects.json"
     );
     const json = res.json();
 
-    if (res.ok) {
-      return json;
-    } else {
-      // @ts-ignore
-      throw new Error(json);
-    }
+    // @ts-ignore
+    if (!res.ok) throw new Error(json);
+
+    if (res.ok) return json;
   };
 
   let promise = fetchProjects();
 
   const decide = (/** @type {string[]} */ arr) => {
     let roundedRandom = Math.round(Math.random() * arr.length);
+    let decidedValue;
 
     for (let i = 0; i < arr.length; i++) {
-      return roundedRandom == i
-        ? arr[i] === undefined
-          ? decide(arr)
-          : arr[i]
-        : arr[arr.length - i] === undefined
-        ? decide(arr)
-        : arr[arr.length - i];
+      if (roundedRandom == i) {
+        if (arr[i] === undefined) decidedValue = decide(arr);
+        else decidedValue = arr[i];
+      } else {
+        if (arr[arr.length - 1] === undefined) decidedValue = decide(arr);
+        else decidedValue = arr[arr.length - 1];
+      }
     }
+
+    return decidedValue;
   };
 
   let mightBeNothing = [
@@ -48,6 +52,10 @@
     if (bool) document.body.classList.add("overflow-x-hidden");
     else document.body.classList.remove("overflow-x-hidden");
   };
+
+  let showError = true;
+
+  const hideError = () => (showError = false);
 
   export let type;
 </script>
@@ -133,19 +141,42 @@
           </div>
         {/each}
       {:catch error}
-        <div
-          transition:fly={{ x: 200, duration: 2000 }}
-          on:introstart={() => toggleOverflowHidden(true)}
-          on:outrostart={() => toggleOverflowHidden(true)}
-          on:introend={() => toggleOverflowHidden()}
-          on:outroend={() => toggleOverflowHidden()}
-          class="absolute bottom-12 right-12"
-        >
-          <Toast>
-            <Icon data={warning} />
-            {error}
-          </Toast>
-        </div>
+        <div class="radial-progress animate-spin mt-32" style="--value: 70;" />
+        {#if showError}
+          <div
+            in:fly={{ x: 400, duration: 1500 }}
+            out:fly={{ x: 400, duration: 1500 }}
+            on:introstart={() => toggleOverflowHidden(true)}
+            on:outrostart={() => toggleOverflowHidden(true)}
+            class="absolute bottom-12 right-12"
+          >
+            <Toast>
+              <Icon data={warning} scale={1.5} />
+              <div class="text-left ml-4">
+                {error}
+                <div>
+                  Report at:
+                  <a
+                    href="https://github.com/curious-george-nine/taiko-list/issues"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="link"
+                  >
+                    Github issues
+                  </a>
+                </div>
+              </div>
+              <div>
+                <button
+                  class="btn btn-circle btn-ghost btn-sm no-animation absolute top-[-5px] right-[-84px]"
+                  on:click={hideError}
+                >
+                  <Icon data={close} />
+                </button>
+              </div>
+            </Toast>
+          </div>
+        {/if}
       {/await}
     </div>
   </div>

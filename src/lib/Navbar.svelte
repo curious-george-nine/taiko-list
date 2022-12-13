@@ -38,7 +38,6 @@
         >
       </label>
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-      <!-- svelte-ignore a11y-missing-attribute -->
       <ul
         tabindex="0"
         class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
