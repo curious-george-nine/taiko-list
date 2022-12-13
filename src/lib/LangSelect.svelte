@@ -2,7 +2,7 @@
   import { t, locales, locale } from "../i18n";
 </script>
 
-<div class="mt-4">
+<div class="mt-4 lg:mt-0">
   <div class="menu-title lg:hidden">
     current: {$t("select.language")}
   </div>
